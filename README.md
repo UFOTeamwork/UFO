@@ -1,7 +1,8 @@
 # UFO: Unified Fine-grained Omni-conditional Evaluation for Image Generation
 
-UFO is a fine-grained multimodal evaluation framework for text-and-reference-image conditioned image generation tasks.  
-The framework decomposes complex generation requirements into atomic evaluation units and performs structured consistency evaluation between:
+UFO is a fine-grained multimodal evaluation framework for text-and-reference-image conditioned image generation tasks.
+
+The framework decomposes complex generation requirements into atomic evaluation units and performs structured consistency evaluation across:
 
 - text instructions,
 - reference images,
@@ -28,16 +29,16 @@ UFO is designed for evaluating modern multimodal image generation and editing sy
 
 ```text
 UFO/
-©À©¤©¤ config/                     # Example configuration files
-©À©¤©¤ scripts/                    # Entry scripts
-©À©¤©¤ src/
-©¦   ©À©¤©¤ evaluator_pipeline/     # Evaluation pipeline
-©¦   ©À©¤©¤ split_pipeline/         # Atomic decomposition pipeline
-©¦   ©À©¤©¤ prompts/                # Prompt templates
-©¦   ©À©¤©¤ utils/                  # Utility functions
-©¦   ©¸©¤©¤ vlm_tools/              # VLM API wrappers
-©À©¤©¤ requirements.txt
-©¸©¤©¤ README.md
+|-- config/                     # Example configuration files
+|-- scripts/                    # Entry scripts
+|-- src/
+|   |-- evaluator_pipeline/     # Evaluation pipeline
+|   |-- split_pipeline/         # Atomic decomposition pipeline
+|   |-- prompts/                # Prompt templates
+|   |-- utils/                  # Utility functions
+|   `-- vlm_tools/              # VLM API wrappers
+|-- requirements.txt
+`-- README.md
 ```
 
 ---
@@ -70,11 +71,11 @@ pip install -r requirements.txt
 
 UFO currently supports:
 
-* GPT
-* Qwen
-* Gemini
-* Claude
-* Doubao
+- GPT
+- Qwen
+- Gemini
+- Claude
+- Doubao
 
 Backend implementations are located in:
 
@@ -92,7 +93,7 @@ Example configuration files are provided in:
 config/
 ```
 
-Create your own runtime config files:
+Create your own runtime configuration files:
 
 ```bash
 cp config/eval_config.example.yaml config/eval_config.yaml
@@ -101,10 +102,10 @@ cp config/split_config.example.yaml config/split_config.yaml
 
 Then modify:
 
-* API keys
-* model names
-* dataset paths
-* output paths
+- API keys
+- model names
+- dataset paths
+- output paths
 
 ---
 
@@ -121,9 +122,9 @@ python scripts/run_split_generate.py \
 
 The generated outputs include:
 
-* target descriptions
-* structured question lists
-* atomic semantic units
+- target descriptions
+- structured question lists
+- atomic semantic units
 
 ---
 
@@ -140,10 +141,10 @@ python scripts/run_eval_score.py \
 
 Evaluation includes:
 
-* text consistency
-* image consistency
-* joint multimodal consistency
-* weighted aggregation
+- text consistency
+- image consistency
+- joint multimodal consistency
+- weighted aggregation
 
 ---
 
@@ -151,11 +152,11 @@ Evaluation includes:
 
 UFO evaluates generation quality from three aspects:
 
-| Aspect            | Description                                                           |
-| ----------------- | --------------------------------------------------------------------- |
-| Text Consistency  | Whether the generated image follows text instructions                 |
+| Aspect | Description |
+|---|---|
+| Text Consistency | Whether the generated image follows text instructions |
 | Image Consistency | Whether the generated image preserves reference-image characteristics |
-| Joint Consistency | Whether both modalities are simultaneously satisfied                  |
+| Joint Consistency | Whether both modalities are simultaneously satisfied |
 
 The framework decomposes complex conditions into fine-grained semantic units for improved interpretability and robustness.
 
@@ -165,15 +166,20 @@ The framework decomposes complex conditions into fine-grained semantic units for
 
 ```text
 Reference Image + Text Prompt
-            ¡ý
+            |
+            v
 Atomic Task Decomposition
-            ¡ý
+            |
+            v
 Question Generation
-            ¡ý
+            |
+            v
 VLM-based Evaluation
-            ¡ý
+            |
+            v
 Weighted Aggregation
-            ¡ý
+            |
+            v
 Final UFO Score
 ```
 
@@ -197,7 +203,3 @@ If you find this project useful, please consider citing:
 # License
 
 This project is released for academic research purposes.
-
----
-
-
