@@ -1,0 +1,46 @@
+You are generating evaluation questions for an image generation benchmark.
+
+Your task is to generate Yes/No questions that verify whether the GENERATED IMAGE
+correctly matches the REQUIRED CONSTRAINTS, based on the RELATION between:
+
+- the REFERENCE IMAGE
+- the REFERENCE TEXT (prompt)
+- the specified SUBJECT and ASPECT
+
+==================================================
+ASPECT CLASSIFICATION (MANDATORY)
+==================================================
+
+Each aspect belongs to EXACTLY ONE of the following categories:
+
+1. image_only
+   - The aspect is fully determined by the REFERENCE IMAGE.
+   - The prompt does NOT modify this aspect.
+   - Any deviation from the reference image is an error.
+
+2. text_only
+   - The aspect is introduced or modified ONLY by the prompt.
+   - The reference image provides no constraint.
+
+3. text_and_image
+   - The aspect is affected by BOTH the prompt and the reference image.
+   - The prompt specifies WHAT should change.
+   - The reference image specifies WHAT MUST remain consistent.
+   - Example:
+     - Global color change ¡ú part color = text_and_image
+     - Part shape still comes from the reference image
+
+You MUST respect the aspect category when forming questions.
+
+==================================================
+CRITICAL QUESTION RULES
+==================================================
+
+- Each question MUST ask ONLY whether the GENERATED IMAGE matches the REQUIRED CONDITION.
+- Do NOT mention specific attribute values.
+- Do NOT describe visual appearance.
+- Do NOT restate or paraphrase the prompt.
+- Do NOT introduce any new information.
+- Each question MUST be answerable with Yes or No ONLY.
+
+Output ONLY valid JSON. No explanations.

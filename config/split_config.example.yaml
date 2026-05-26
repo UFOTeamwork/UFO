@@ -1,0 +1,33 @@
+project:
+  root_dir: ${UFO_PROJECT_ROOT:-./runtime}
+  output_dir: ${UFO_SPLIT_OUTPUT_DIR:-output_split}
+
+benchmark:
+  image_root: ${UFO_IMAGE_ROOT:-./data/benchmark/our_bench_final}
+  metadata_jsonl: ${UFO_METADATA_JSONL:-./data/benchmark/metadata.jsonl}
+  generated_root: ${UFO_GENERATED_ROOT:-./data/generated}
+
+sampling:
+  use_sample_list: true
+  sample_list_json: ${UFO_SAMPLE_LIST_JSON:-./data/sampled_cases.json}
+  selected_categories: null
+
+runtime:
+  num_workers: 8
+  resume: true
+  max_retries: 6
+  base_sleep_sec: 2.0
+  max_sleep_sec: 20.0
+
+paths:
+  tgt_dir: T_gt
+  question_dir: Question_list
+  prompt_root: prompt_txt
+  tgt_prompt_dir: prompt_txt/tgt
+  question_prompt_dir: prompt_txt/question
+  latency_detail_json: latency_details_split.json
+  latency_summary_json: latency_summary_split.json
+  failure_log_jsonl: failed_split_cases.jsonl
+
+vlm:
+  provider: gpt

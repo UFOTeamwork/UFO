@@ -1,0 +1,54 @@
+project:
+  root_dir: ${UFO_PROJECT_ROOT:-./runtime}
+  output_dir: ${UFO_EVAL_OUTPUT_DIR:-output_eval}
+
+benchmark:
+  image_root: ${UFO_IMAGE_ROOT:-./data/benchmark/our_bench_final}
+  metadata_jsonl: ${UFO_METADATA_JSONL:-./data/benchmark/metadata.jsonl}
+  generated_root: ${UFO_GENERATED_ROOT:-./data/generated}
+  question_root: ${UFO_QUESTION_ROOT:-./runtime/output_split/Question_list}
+
+sampling:
+  use_sample_list: true
+  sample_list_json: ${UFO_SAMPLE_LIST_JSON:-./data/sampled_cases.json}
+  target_sample_idx: 0
+  max_eval_images: 500
+  selected_categories: null
+
+runtime:
+  num_workers: 8
+  resume: true
+  max_retries: 8
+  base_sleep_sec: 5.0
+  max_sleep_sec: 60.0
+
+paths:
+  result_dir: result
+  debug_dir: debug
+  latency_detail_json: latency_details_eval.json
+  latency_summary_json: latency_summary_eval.json
+  all_sample_scores_json: all_sample_scores.json
+  all_sample_scores_csv: all_sample_scores.csv
+  failure_log_jsonl: failed_eval_cases.jsonl
+  failure_summary_json: failure_summary.json
+
+debug:
+  enabled: false
+
+analysis:
+  failure_summary: true
+  benchmark_stats: true
+  folder_stats: true
+  benchmark_stats_json: benchmark_stats_eval.json
+  question_folder_stats_json: folder_stats_question.json
+  result_folder_stats_json: folder_stats_eval_result.json
+
+vlm:
+  provider: gemini
+
+face_similarity:
+  enabled: false
+  arcface_root: ${UFO_ARCFACE_ROOT:-./third_party/arcface-pytorch}
+  model_path: ${UFO_ARCFACE_MODEL_PATH:-./third_party/arcface-pytorch/model_data/arcface_mobilefacenet.pth}
+  backbone: ${UFO_ARCFACE_BACKBONE:-mobilefacenet}
+  use_cuda: ${UFO_ARCFACE_USE_CUDA:-false}
