@@ -92,7 +92,23 @@ def run_evaluator_pipeline(cfg: Dict[str, Any]) -> None:
             )
             for category, subtype, edit_type, uid in sampled_raw
         }
-    target_sample_idx = cfg['sampling']['target_sample_idx']
+    # target_sample_idx = cfg['sampling']['target_sample_idx']
+    sampling_cfg = cfg.get('sampling', {})
+
+    # 处理 target_sample_idx
+    target_sample_set = None
+    if sampling_cfg.get('target_sample_indices') is not None:
+        # 支持列表形式
+        target_sample_set = set(int(x) for x in sampling_cfg['target_sample_indices'])
+    elif sampling_cfg.get('target_sample_idx') is not None:
+        target_sample_set = {int(sampling_cfg['target_sample_idx'])}
+
+    # 处理 max_eval_images
+    max_eval_images = sampling_cfg.get('max_eval_images', None)
+    if max_eval_images is not None:
+        max_eval_images = int(max_eval_images)
+
+
     question_root = cfg['benchmark']['question_root']
     model_name = cfg.get('model_name', 'bagel')
     selected_categories = cfg['sampling'].get('selected_categories')
@@ -130,12 +146,16 @@ def run_evaluator_pipeline(cfg: Dict[str, Any]) -> None:
             uid=gen['uid'],
         )
         generated_all.append((gen, gen_key))
-        if gen['sample_idx'] != target_sample_idx:
+        # if gen['sample_idx'] != target_sample_idx:
+        #     continue
+        if target_sample_set is not None and int(gen['sample_idx']) not in target_sample_set:
             continue
         if sampled is not None and gen_key not in sampled:
             continue
         generated.append(gen)
-        if len(generated) >= cfg['sampling']['max_eval_images']:
+        # if len(generated) >= cfg['sampling']['max_eval_images']:
+        #     break
+        if max_eval_images is not None and len(generated) >= max_eval_images:
             break
 
     available_generated_keys = {key for _, key in generated_all}
