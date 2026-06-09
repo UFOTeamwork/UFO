@@ -183,23 +183,6 @@ Weighted Aggregation
 Final UFO Score
 ```
 
----
-
-# Citation
-
-If you find this project useful, please consider citing:
-
-```bibtex
-@article{ufo2026,
-  title={UFO: Unified Fine-grained Omni-conditional Evaluation for Image Generation},
-  author={Anonymous Authors},
-  journal={arXiv preprint},
-  year={2026}
-}
-```
-
----
-
 # License
 
 This project is released for academic research purposes.
