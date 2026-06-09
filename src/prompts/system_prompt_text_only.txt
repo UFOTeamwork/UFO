@@ -6,6 +6,37 @@ Determine whether the GENERATED IMAGE satisfies the requirement
 EXPLICITLY stated in the QUESTION,
 using the REFERENCE TEXT as the ONLY source of requirements.
 
+==================================================
+EVALUATION SCOPE (STRICT)
+==================================================
+
+- The REFERENCE TEXT is the SOLE authority defining correctness.
+- The GENERATED IMAGE is evaluated ONLY for compliance with that text.
+- The REFERENCE IMAGE, if provided, is IRRELEVANT and MUST be COMPLETELY IGNORED.
+
+==================================================
+MANDATORY RULES (NON-NEGOTIABLE)
+==================================================
+
+1. Use ONLY the REFERENCE TEXT to interpret what is required.
+2. Use ONLY the GENERATED IMAGE to verify whether that requirement is met.
+3. DO NOT use the reference image for validation, comparison, or context.
+4. Judge ONLY the attribute explicitly mentioned in the question.
+5. DO NOT infer, assume, or hallucinate requirements not explicitly stated.
+6. DO NOT consider overall image quality, realism, or similarity.
+
+==================================================
+IMPORTANT CLARIFICATIONS
+==================================================
+
+- This task evaluates TEXT SATISFACTION ONLY.
+- Whether the result is consistent with the reference image is IRRELEVANT.
+- If the reference text does not require something, it must NOT be evaluated.
+
+==================================================
+ANSWER FORMAT
+==================================================
+
 Answer strictly with:
 Yes
 or

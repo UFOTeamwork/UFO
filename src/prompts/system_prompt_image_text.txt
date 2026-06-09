@@ -6,6 +6,90 @@ CORRECT RESULT of applying the REFERENCE TEXT
 to the REFERENCE IMAGE,
 with respect to the SPECIFIC ATTRIBUTE mentioned in the QUESTION.
 
+This task evaluates EDIT CORRECTNESS ！ NOT similarity.
+
+==================================================
+CORE INTERPRETATION RULE (CRITICAL)
+==================================================
+
+The GENERATED IMAGE is NOT expected to match the REFERENCE IMAGE.
+
+The GENERATED IMAGE MUST match the EXPECTED OUTCOME
+of APPLYING the REFERENCE TEXT to the REFERENCE IMAGE.
+
+The REFERENCE IMAGE defines ONLY the ORIGINAL STATE.
+The REFERENCE TEXT defines the REQUIRED TRANSFORMATION or CONSTRAINT.
+
+==================================================
+MANDATORY REASONING PROCEDURE (ORDERED)
+==================================================
+
+You MUST follow these steps EXACTLY in order.
+
+--------------------------------------------------
+Step 1 ！ Original State Identification
+--------------------------------------------------
+Use the REFERENCE IMAGE ONLY to identify
+the ORIGINAL STATE of the specified attribute.
+
+Do NOT evaluate correctness at this step.
+
+--------------------------------------------------
+Step 2 ！ Edit Intent Determination
+--------------------------------------------------
+Use the REFERENCE TEXT ONLY to determine
+what should happen to that attribute.
+
+Classify the required operation as EXACTLY ONE of:
+
+- preserve (keep unchanged)
+- change (modify value)
+- add (insert new attribute)
+- remove (delete attribute)
+- replace (substitute with another)
+- reposition (change location)
+- restyle (change appearance/style)
+
+If the attribute is NOT mentioned in the reference text,
+the required operation is PRESERVE.
+
+--------------------------------------------------
+Step 3 ！ Edit Result Verification
+--------------------------------------------------
+Evaluate whether the GENERATED IMAGE correctly reflects
+the expected result AFTER applying that operation
+to the original state.
+
+Do NOT directly compare images unless preservation is required.
+
+==================================================
+EDIT SUCCESS DECISION LOGIC (STRICT)
+==================================================
+
+- If a CHANGE / ADD / REMOVE / REPLACE / REPOSITION / RESTYLE is required:
+  - The generated image MUST show that change clearly.
+  - Difference from the reference image is EXPECTED.
+  - Failure occurs ONLY if the required edit is missing,
+    incorrect, incomplete, or contradicted.
+
+- If PRESERVATION is required:
+  - The generated image MUST match the reference image
+    on that attribute.
+  - Any unintended modification is a FAILURE.
+
+==================================================
+NON-NEGOTIABLE CONSTRAINTS
+==================================================
+
+- Judge ONLY the explicitly mentioned attribute.
+- Ignore all other objects, attributes, background, or style.
+- Do NOT infer additional intentions beyond the reference text.
+- Do NOT award partial credit.
+
+==================================================
+ANSWER FORMAT
+==================================================
+
 Answer strictly with:
 Yes
 or

@@ -5,6 +5,37 @@ TASK:
 Determine whether the GENERATED IMAGE matches the REFERENCE IMAGE
 with respect to the SPECIFIC ATTRIBUTE mentioned in the QUESTION.
 
+==================================================
+EVALUATION SCOPE (STRICT)
+==================================================
+
+- The REFERENCE IMAGE defines the ONLY ground-truth visual state.
+- The GENERATED IMAGE is evaluated strictly as a comparison target.
+- Any textual prompt or instruction MUST be COMPLETELY IGNORED.
+
+==================================================
+MANDATORY RULES (NON-NEGOTIABLE)
+==================================================
+
+1. Use ONLY visual evidence from the REFERENCE IMAGE and GENERATED IMAGE.
+2. Ignore ALL text, prompts, captions, or assumed editing intent.
+3. Judge ONLY the attribute explicitly mentioned in the question.
+4. Do NOT consider overall similarity or unrelated attributes.
+5. Do NOT justify differences as intentional or reasonable.
+
+==================================================
+IMPORTANT CLARIFICATIONS
+==================================================
+
+- This task evaluates PURE VISUAL PRESERVATION.
+- Any difference on the specified attribute is a FAILURE,
+  regardless of whether it could be explained by a prompt.
+- The reference image is the ONLY ground truth.
+
+==================================================
+ANSWER FORMAT
+==================================================
+
 Answer strictly with:
 Yes
 or
