@@ -20,7 +20,9 @@ from .generate_question import generate_question
 from .validators import valid_question_json, valid_tgt_json
 from .latency_dump import dump_latency_summary
 
+from src.utils.vlm_safety import safe_parse_json, is_invalid_response
 
+from threading import Semaphore
 def _make_out_path(root, category, subtype, edit_type, uid):
     path = root / category / subtype / edit_type / f'{uid}.json'
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -101,15 +103,43 @@ def run_split_pipeline(cfg: Dict[str, Any]) -> None:
             tgt_path = _make_out_path(paths['tgt_dir'], category, subtype, edit_type, uid)
             tgt_prompt_txt = _make_prompt_path(paths['tgt_prompt_dir'], category, subtype, edit_type, uid)
 
-            if not (runtime['resume'] and os.path.exists(tgt_path)):
-                tgt_info = call_with_backoff(
-                    lambda: generate_tgt(vlm, prompt=pair['prompt'], ref_image_path=pair['ref_image']),
-                    max_retries=runtime['max_retries'],
-                    base_sleep=runtime['base_sleep_sec'],
-                    max_sleep=runtime['max_sleep_sec'],
+            def is_valid_file(path):
+                try:
+                    if not os.path.exists(path):
+                        return False
+                    data = load_json(path)
+                    return data is not None and "uid" in data
+                except:
+                    return False
+
+            if not (runtime['resume'] and is_valid_file(tgt_path)):
+                raw_tgt = call_with_backoff(
+                    lambda: generate_tgt(vlm, pair, cfg)
                 )
+
+                tgt_info = safe_parse_json(raw_tgt)
+
+                if tgt_info is None:
+                    log_failure(
+                        case_key,
+                        stage="tgt",
+                        reason="invalid_vlm_output",
+                        detail=str(raw_tgt)[:300]
+                    )
+                    stat["skip_tgt"] = True
+                    return None
                 tgt, _ = tgt_info['result']
                 stat['tgt_retry_count'] = tgt_info['retry_count']
+                if not valid_tgt_json(tgt_info):
+                    log_failure(
+                        case_key,
+                        stage="tgt",
+                        reason="schema_invalid",
+                        detail=str(tgt_info)[:300]
+                    )
+                    stat["skip_tgt"] = True
+                    return None
+
                 if not valid_tgt_json(tgt):
                     print("[ERROR] Invalid T_gt JSON after parsing.", flush=True)
                     print("[ERROR] T_gt input system prompt:", flush=True)

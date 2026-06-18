@@ -117,7 +117,8 @@ Run:
 
 ```bash
 python scripts/run_split_generate.py \
-    --config config/split_config.yaml
+    --config config/split_config.yaml \
+    --vlm gpt
 ```
 
 The generated outputs include:

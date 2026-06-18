@@ -57,5 +57,25 @@ def extract_json_value(raw: str) -> tuple[Any, str]:
         raise last_error
     raise JSONDecodeError("No JSON object or array found in model output", raw, 0)
 
+import json
+import re
 
+def extract_json_safe(text: str):
+    if text is None:
+        return None
+
+    try:
+        # 1. try direct json
+        return json.loads(text)
+    except:
+        pass
+
+    try:
+        # 2. extract first json block
+        match = re.search(r"\{.*\}", text, re.S)
+        if not match:
+            return None
+        return json.loads(match.group())
+    except:
+        return None
 __all__ = ["extract_json_value"]
