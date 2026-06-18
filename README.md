@@ -85,6 +85,44 @@ src/vlm_tools/
 
 ---
 
+# API Keys
+
+Except for `qwen` (which runs locally), every VLM backend calls a remote API and
+**requires an API key exported as an environment variable before running**.
+
+Each backend first looks for the universal `UFO_VLM_API_KEY`; if it is not set,
+it falls back to the provider-specific variable below.
+
+| `--vlm` | Universal variable | Provider-specific variable |
+|---|---|---|
+| `gpt`    | `UFO_VLM_API_KEY` | `OPENAI_API_KEY` |
+| `gemini` | `UFO_VLM_API_KEY` | `GEMINI_API_KEY` |
+| `claude` | `UFO_VLM_API_KEY` | `ANTHROPIC_API_KEY` |
+| `doubao` | `UFO_VLM_API_KEY` | `DOUBAO_API_KEY` |
+| `qwen`   | — (local model, no key needed) | — |
+
+Export the key in your shell, for example:
+
+```bash
+# Option A: one universal key for whichever backend you use
+export UFO_VLM_API_KEY="your-api-key"
+
+# Option B: provider-specific key (example for GPT)
+export OPENAI_API_KEY="your-openai-key"
+```
+
+If no matching key is found, the run fails fast with an error such as:
+
+```text
+Missing required environment variable for gpt. Tried: UFO_VLM_API_KEY, OPENAI_API_KEY
+```
+
+> `qwen` loads a local model (default `Qwen/Qwen2.5-VL-8B-Instruct`). Point it at
+> a local checkpoint with `UFO_QWEN_MODEL_PATH` if needed, and install the extra
+> dependencies it requires (e.g. `torch`, `transformers`).
+
+---
+
 # Configuration
 
 Example configuration files are provided in:
@@ -113,9 +151,11 @@ Then modify:
 
 The split pipeline decomposes multimodal generation tasks into atomic evaluation units.
 
-Run:
+Run (remember to export the API key first, see [API Keys](#api-keys)):
 
 ```bash
+export UFO_VLM_API_KEY="your-api-key"
+
 python scripts/run_split_generate.py \
     --config config/split_config.yaml \
     --vlm gpt
@@ -133,12 +173,20 @@ The generated outputs include:
 
 The evaluation pipeline evaluates generated images using multimodal reasoning.
 
-Run:
+Run (remember to export the API key first, see [API Keys](#api-keys)):
 
 ```bash
+export UFO_VLM_API_KEY="your-api-key"
+
 python scripts/run_eval_score.py \
-    --config config/eval_config.yaml
+    --config config/eval_config.yaml \
+    --vlm gpt \
+    --model_name bagel
 ```
+
+- `--vlm` selects the VLM judge (`gpt` / `gemini` / `claude` / `doubao` / `qwen`).
+- `--model_name` selects the generated-image model to evaluate; it must match the
+  directory name under `<generated_root>/<model_name>/...`.
 
 Evaluation includes:
 
@@ -146,6 +194,28 @@ Evaluation includes:
 - image consistency
 - joint multimodal consistency
 - weighted aggregation
+
+## Evaluate All Models at Once
+
+To evaluate several generated-image models in one batch, use the helper script,
+which loops the evaluation over each model and writes a separate log per model:
+
+```bash
+export UFO_VLM_API_KEY="your-api-key"
+
+chmod +x run_all_models_eval.sh
+./run_all_models_eval.sh
+
+# or run in the background
+nohup ./run_all_models_eval.sh > run_all_models.log 2>&1 &
+```
+
+Defaults (model list, VLM judge, config, log dir) can be overridden via
+environment variables:
+
+```bash
+VLM=gemini CONFIG=config/eval_config.yaml MODELS="bagel uno" ./run_all_models_eval.sh
+```
 
 ---
 
