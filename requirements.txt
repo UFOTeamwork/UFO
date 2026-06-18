@@ -4,3 +4,10 @@ Pillow>=10.0.0
 requests>=2.31.0
 tqdm>=4.66.0
 numpy>=1.24.0
+
+# Optional: only required when face_similarity.enabled=true in the eval config.
+# These backends are imported lazily, so the base install above is enough for
+# the default (face similarity disabled) pipeline.
+#   torch
+#   torchvision
+#   opencv-python

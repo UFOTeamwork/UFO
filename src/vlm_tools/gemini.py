@@ -335,9 +335,9 @@ Only explain the reason.
                 "reason": f"[reason_generation_failed] {str(e)}",
                 "latency": {
                     "encode_sec": encode_sec,
-                    "api_wall_sec": None,
-                    "retry_count": None,
-                    "sleep_sec": None,
+                    "api_wall_sec": 0.0,
+                    "retry_count": 0,
+                    "sleep_sec": 0.0,
                     "total_sec": now() - t0_total,
                 },
             }

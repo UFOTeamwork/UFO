@@ -111,7 +111,7 @@ def run_evaluator_pipeline(cfg: Dict[str, Any]) -> None:
 
     question_root = cfg['benchmark']['question_root']
     model_name = cfg.get('model_name', 'bagel')
-    selected_categories = cfg['sampling'].get('selected_categories')
+    selected_categories = sampling_cfg.get('selected_categories')
     runtime = cfg['runtime']
     log(
         f"Evaluator pipeline started | model_name={model_name} | "
@@ -179,7 +179,8 @@ def run_evaluator_pipeline(cfg: Dict[str, Any]) -> None:
             )
     log(
         f"Generated scan summary | scanned={len(generated_all)} | "
-        f"target_sample_idx={target_sample_idx} | selected_for_eval={len(generated)}"
+        f"target_sample_set={sorted(target_sample_set) if target_sample_set is not None else 'all'} | "
+        f"selected_for_eval={len(generated)}"
     )
 
     failures = Counter()

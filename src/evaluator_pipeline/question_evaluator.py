@@ -4,9 +4,6 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, List
 
-import torch
-
-from .face_similarity import FaceSimilarityEvaluator
 from .prompts import (
     load_system_prompt_image_only,
     load_system_prompt_image_text,
@@ -29,6 +26,12 @@ class QuestionEvaluator:
         self.face = None
 
         if face_cfg.get("enabled", False):
+            # Heavy deps (torch/opencv/torchvision) are only required when face
+            # similarity is enabled, so import them lazily here.
+            import torch
+
+            from .face_similarity import FaceSimilarityEvaluator
+
             use_cuda = bool(face_cfg.get("use_cuda", False)) and torch.cuda.is_available()
             face_cfg["use_cuda"] = use_cuda
             face_cfg["remove_bg"] = True
@@ -58,7 +61,7 @@ class QuestionEvaluator:
         face_sec = 0.0
         use_arcface = q.get("part") == "face" and self.face is not None
 
-        # ── face 题：优先走 ArcFace，跳过 VLM ──────────────────────────────
+        # Face questions: prefer ArcFace, skip the VLM when it succeeds.
         if use_arcface:
             import time
             t0_face = time.perf_counter()
@@ -107,9 +110,9 @@ class QuestionEvaluator:
                         "ask_no_reason_api_sec":   0.0,
                     },
                 }
-            # arcface 失败，继续走 VLM（fall through）
+            # ArcFace failed: fall through to the VLM path.
 
-        # ── VLM 路径（非 face 题，或 ArcFace 失败的 face 题）────────────────
+        # VLM path (non-face questions, or face questions where ArcFace failed).
         res = self.matcher.ask_yes_no(
             system_prompt=self._system_prompt(q["relevance"]),
             question_text=q["question"]["question"],
@@ -137,8 +140,9 @@ class QuestionEvaluator:
                 reason_total_sec = reason_info["latency"]["total_sec"]
                 reason_api_sec = reason_info["latency"]["api_wall_sec"]
             except Exception as e:
-                # explain_no 重试耗尽或返回空内容时，不污染 reason 字段，向上抛出由
-                # evaluate_question_list 决定是跳过还是整批失败
+                # When explain_no exhausts retries or returns empty content, do
+                # not pollute the reason field; raise so evaluate_question_list
+                # can decide whether to skip or fail the whole batch.
                 raise RuntimeError(
                     f"explain_no failed for question '{q['question']['question']}': {e}"
                 ) from e

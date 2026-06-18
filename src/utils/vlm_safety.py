@@ -21,7 +21,7 @@ def is_invalid_response(text: str) -> bool:
 
 def safe_parse_json(text: str):
     """
-    强制提取 JSON（避免 VLM 输出夹杂解释文本）
+    Force-extract JSON (guards against VLM output mixed with explanatory text).
     """
     if is_invalid_response(text):
         return None
