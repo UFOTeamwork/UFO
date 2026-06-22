@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 
-from .models import normalize_vlm_name
+from .models import normalize_vlm_name, VLM_NAME_ALIASES
 
 
 def _resolve_provider_class(vlm_name: str):
@@ -35,9 +35,19 @@ def _resolve_provider_class(vlm_name: str):
     raise ValueError(f"Unsupported VLM after normalization: {vlm_name}")
 
 
-def build_vlm(vlm_name: str):
+def build_vlm(vlm_name: str, model: str | None = None):
+    """Build a VLM backend.
+
+    ``model`` optionally overrides the backend's hardcoded ``default_model``
+    (useful when a provider deprecates a model). A value that is empty or is
+    itself a provider alias (e.g. "gpt") is ignored and the default is used,
+    so callers can safely pass through ``--vlm``/config values.
+    """
     key, provider_cls = _resolve_provider_class(vlm_name)
-    resolved_model = provider_cls.default_model
+    if model and model not in VLM_NAME_ALIASES:
+        resolved_model = model
+    else:
+        resolved_model = provider_cls.default_model
     if not resolved_model:
         raise ValueError(f"No default model configured for VLM: {key}")
     api_url = provider_cls.default_api_url or ""

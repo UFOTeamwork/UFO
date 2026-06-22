@@ -18,11 +18,14 @@ def init_vlm_client(cfg):
     provider so worker threads reuse one instance instead of rebuilding it for
     every pair (important for local backends such as Qwen).
     """
-    provider = cfg['vlm']['provider']
+    vlm_cfg = cfg['vlm']
+    provider = vlm_cfg['provider']
+    model = vlm_cfg.get('model')
+    cache_key = (provider, model)
     with _VLM_CACHE_LOCK:
-        if provider not in _VLM_CACHE:
-            _VLM_CACHE[provider] = build_vlm(provider)
-        return _VLM_CACHE[provider]
+        if cache_key not in _VLM_CACHE:
+            _VLM_CACHE[cache_key] = build_vlm(provider, model=model)
+        return _VLM_CACHE[cache_key]
 
 
 class RobustVLMClient:

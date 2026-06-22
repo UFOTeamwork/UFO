@@ -18,12 +18,17 @@ def main():
     parser.add_argument('--config', required=True)
     parser.add_argument('--model_name', default='bagel')
     parser.add_argument('--vlm', required=True)
+    parser.add_argument('--vlm_model', default=None,
+                        help='Override the judge VLM model name (e.g. a non-deprecated model). '
+                             'Falls back to config vlm.model, then the backend default.')
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
     cfg = load_config(args.config)
     cfg['model_name'] = args.model_name
     vlm_cfg = dict(cfg.get('vlm') or {})
     vlm_cfg['provider'] = args.vlm
+    if args.vlm_model:
+        vlm_cfg['model'] = args.vlm_model
     cfg['vlm'] = vlm_cfg
     debug_cfg = dict(cfg.get('debug') or {})
     if args.debug:

@@ -8,6 +8,6 @@ def get_vlm(cfg):
     if _VLM_CACHE is not None:
         return _VLM_CACHE
 
-    vlm = build_vlm(cfg["vlm"]["provider"])
+    vlm = build_vlm(cfg["vlm"]["provider"], model=cfg["vlm"].get("model"))
     _VLM_CACHE = SafeVLM(vlm)
     return _VLM_CACHE

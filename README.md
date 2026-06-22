@@ -187,6 +187,18 @@ python scripts/run_eval_score.py \
 - `--vlm` selects the VLM judge (`gpt` / `gemini` / `claude` / `doubao` / `qwen`).
 - `--model_name` selects the generated-image model to evaluate; it must match the
   directory name under `<generated_root>/<model_name>/...`.
+- `--vlm_model` (optional) overrides the judge model name. Each backend ships a
+  `default_model`; if the API provider has **deprecated** it (you will see a
+  `400 ... model ... deprecated / not_found` error), pass a valid model here, or
+  set `vlm.model` in the config. Example:
+
+  ```bash
+  python scripts/run_eval_score.py --config config/eval_config.yaml \
+      --vlm gemini --vlm_model gemini-2.5-pro --model_name bagel
+  ```
+
+  Permanent client errors like a deprecated model now fail fast instead of
+  consuming the full retry budget.
 
 Evaluation includes:
 
