@@ -26,8 +26,13 @@ cd "${SCRIPT_DIR}"
 
 # --- Configuration (override via environment variables) ----------------------
 PY_SCRIPT="scripts/run_eval_score.py"
-CONFIG="${CONFIG:-config/eval_config.yaml}"   # falls back to the example below if missing
+<<<<<<< Updated upstream
+CONFIG="${CONFIG:-config/test/eval_config.yaml}"   # falls back to the example below if missing
 VLM="${VLM:-gpt}"                             # VLM judge: gpt | gemini | claude | doubao | qwen (keep in sync with split)
+=======
+CONFIG="${CONFIG:-config/test/eval_config.yaml}"   # falls back to the example below if missing
+VLM="${VLM:-gemini}"                          # VLM judge: gpt | gemini | claude | doubao | qwen
+>>>>>>> Stashed changes
 LOG_DIR="${LOG_DIR:-logs}"
 EXTRA_ARGS="${EXTRA_ARGS:-}"                   # e.g. EXTRA_ARGS="--debug"
 
