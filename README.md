@@ -185,6 +185,9 @@ python scripts/run_eval_score.py \
 ```
 
 - `--vlm` selects the VLM judge (`gpt` / `gemini` / `claude` / `doubao` / `qwen`).
+  It is **optional**: if omitted, eval uses `vlm.provider` from the config, so it
+  runs the same VLM configured for split. Keep `vlm.provider` identical in
+  `split_config.yaml` and `eval_config.yaml` (both default to `gpt`).
 - `--model_name` selects the generated-image model to evaluate; it must match the
   directory name under `<generated_root>/<model_name>/...`.
 - `--vlm_model` (optional) overrides the judge model name. Each backend ships a
