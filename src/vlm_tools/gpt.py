@@ -11,11 +11,13 @@ from src.utils.retry import call_with_backoff, now
 
 from .base import BaseVLM, parse_yes_no
 
-
 class GPT4o(BaseVLM):
-    default_api_url = "https://api.zhizengzeng.com/v1"
-    # default_model = "gpt-4o-2024-05-13"
-    default_model = "gpt-5.5"
+    # default_api_url = "https://api.zhizengzeng.com/v1"
+    default_api_url = "http://api.yesapikey.com/v1" #hui chan API_URL = "http://66.206.9.230:4000/v1"
+
+    # default_model = "gpt-4o-2024-05-13"#pre
+    default_model = "gpt-4o"#"gpt-4o-2024-11-20"
+    # default_model = "gpt-5.5"
     api_key_env_var = "OPENAI_API_KEY"
     api_key_env_vars = ("UFO_VLM_API_KEY", "OPENAI_API_KEY")
     default_text_max_tokens = 2048
@@ -189,6 +191,15 @@ class GPT4o(BaseVLM):
         )
 
     def ask_vlm(self, prompt: str, images=None, image_roles=None, system_prompt=None, debug: bool = True):
+        """
+        Run the main binary VLM judgment.
+
+        Important semantics:
+        - Parse the RAW model response exactly once via parse_yes_no().
+        - API / extraction / parsing failures are technical failures.
+        - Technical failures MUST propagate to QuestionEvaluator.
+        - Never convert a technical failure into a valid "no" judgment.
+        """
         t0_total = now()
         content = []
         encode_sec = 0.0
@@ -198,6 +209,7 @@ class GPT4o(BaseVLM):
                 raise ValueError("image_roles must be provided when images are used")
             if len(images) != len(image_roles):
                 raise ValueError("images and image_roles length mismatch")
+
             for role, img in zip(image_roles, images):
                 content.append({"type": "text", "text": f"{role}:"})
                 t0_enc = now()
@@ -207,8 +219,13 @@ class GPT4o(BaseVLM):
         content.append({"type": "text", "text": prompt})
 
         def _api_call():
-            return self._chat_completion(system_prompt=system_prompt, user_content=content, max_tokens=2048)
+            return self._chat_completion(
+                system_prompt=system_prompt,
+                user_content=content,
+                max_tokens=2048,
+            )
 
+        # API call.
         try:
             api_info = call_with_backoff(
                 _api_call,
@@ -216,26 +233,65 @@ class GPT4o(BaseVLM):
                 base_sleep=self.default_retry_base_sleep,
                 max_sleep=self.default_retry_max_sleep,
             )
-            response = api_info["result"]
-            answer = self._normalize_yes_no_text(self._extract_text(response))
-            if debug:
-                print("[DEBUG] Raw answer:", answer, flush=True)
         except Exception as e:
             if debug:
-                print("[ERROR] ask_vlm failed after retries:", e, flush=True)
-            return {
-                "answer": "no",
-                "likelist": 0,
-                "latency": {
-                    "encode_sec": encode_sec,
-                    "api_wall_sec": 0.0,
-                    "retry_count": 0,
-                    "sleep_sec": 0.0,
-                    "total_sec": now() - t0_total,
-                },
-            }
+                print(
+                    "[ERROR] ask_vlm API failed after retries:",
+                    f"{type(e).__name__}: {e}",
+                    flush=True,
+                )
+            raise RuntimeError(
+                "ask_vlm API failed after retries | "
+                f"{type(e).__name__}: {e}"
+            ) from e
 
-        answer_norm, likelist = parse_yes_no(answer)
+        # Extract raw response text.
+        try:
+            response = api_info["result"]
+            raw_answer = self._extract_text(response)
+        except Exception as e:
+            if debug:
+                print(
+                    "[ERROR] ask_vlm response extraction failed:",
+                    f"{type(e).__name__}: {e}",
+                    flush=True,
+                )
+            raise RuntimeError(
+                "ask_vlm response extraction failed | "
+                f"{type(e).__name__}: {e}"
+            ) from e
+
+        if debug:
+            print(
+                "[DEBUG] Raw VLM response:",
+                raw_answer,
+                flush=True,
+            )
+
+        # Single yes/no parsing entry point.
+        try:
+            answer_norm, likelist = parse_yes_no(raw_answer)
+        except Exception as e:
+            if debug:
+                print(
+                    "[ERROR] Cannot parse VLM yes/no response:",
+                    raw_answer[:500],
+                    flush=True,
+                )
+            raise RuntimeError(
+                "ask_vlm yes/no parsing failed | "
+                f"{type(e).__name__}: {e}"
+            ) from e
+
+        if debug:
+            print(
+                "[DEBUG] Parsed answer:",
+                answer_norm,
+                "| likelist=",
+                likelist,
+                flush=True,
+            )
+
         return {
             "answer": answer_norm,
             "likelist": likelist,
@@ -302,16 +358,19 @@ class GPT4o(BaseVLM):
                 },
             }
         except Exception as e:
-            return {
-                "reason": f"failed to get reason after retries: {e}",
-                "latency": {
-                    "encode_sec": encode_sec,
-                    "api_wall_sec": 0.0,
-                    "retry_count": 0,
-                    "sleep_sec": 0.0,
-                    "total_sec": now() - t0_total,
-                },
-            }
+            if debug:
+                print(
+                    "[ERROR] ask_no_reason failed after retries:",
+                    f"{type(e).__name__}: {e}",
+                    flush=True,
+                )
+
+            # Explanation is auxiliary. Propagate the technical failure and
+            # let QuestionEvaluator log it and keep the already valid score.
+            raise RuntimeError(
+                "ask_no_reason failed after retries | "
+                f"{type(e).__name__}: {e}"
+            ) from e
 
     def complete_text(self, *, system_prompt: str, user_text: str, max_tokens: int | None = None) -> str:
         response = self._chat_completion(

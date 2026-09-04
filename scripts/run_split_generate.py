@@ -63,3 +63,16 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+"""
+nohup python scripts/run_split_generate.py \
+  --config config/test/split_config.yaml \
+  --vlm gpt \
+  > split_generate.log 2>&1 &
+
+
+  nohup python scripts/run_split_generate.py \
+  --config config/split_config_660.yaml \
+  --vlm gpt \
+  > split_generate.log 2>&1 &
+"""

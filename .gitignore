@@ -96,3 +96,5 @@ tmp/
 
 # Temporary / intermediate scripts
 scripts/test/
+run_all_models_eval.sh
+huichan_key.txt

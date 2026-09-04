@@ -41,9 +41,9 @@ else
         "doubao"
         "qwen"
         "nanobanana"
-        "uno"
-        "omnigen2"
-        "bagel"
+        # "uno"
+        # "omnigen2"
+        # "bagel"
     )
 fi
 
