@@ -27,9 +27,9 @@ class SafeVLM:
         return text
 
     def complete_text(self, *args, retry=3, **kwargs):
-        last_err = None
+        last_err = RuntimeError("complete_text was never attempted (retry <= 0)")
 
-        for _ in range(retry):
+        for _ in range(max(1, retry)):
             try:
                 out = self.vlm.complete_text(*args, **kwargs)
                 return self._check(out)

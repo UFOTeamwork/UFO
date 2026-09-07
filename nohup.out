@@ -1,2 +1,0 @@
-usage: run_split_generate.py [-h] --config CONFIG --vlm VLM
-run_split_generate.py: error: the following arguments are required: --config, --vlm

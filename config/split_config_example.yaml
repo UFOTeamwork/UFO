@@ -31,3 +31,7 @@ paths:
 
 vlm:
   provider: gpt
+  # Optional: override the model. Leave unset/null to use the backend default.
+  # Set this if the provider deprecated the default model, e.g.:
+  #   model: gpt-4o
+  model: null

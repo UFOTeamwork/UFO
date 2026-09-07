@@ -1,0 +1,79 @@
+project:
+  root_dir: ${UFO_PROJECT_ROOT:-./UFO/scripts/test/runtime}
+  output_dir: ${UFO_EVAL_OUTPUT_DIR:-output_eval}
+
+
+benchmark:
+  image_root: ${UFO_IMAGE_ROOT:-./UFO/scripts/test/filtered_dataset_660/reference}
+
+  metadata_jsonl: ${UFO_METADATA_JSONL:-./UFO/scripts/test/filtered_dataset_660/metadata_lyj3.jsonl}
+
+  generated_root: ${UFO_GENERATED_ROOT:-./UFO/scripts/test/filtered_dataset_660/generated}
+
+  question_root: ${UFO_QUESTION_ROOT:-./UFO/scripts/test/filtered_dataset_660/tgt_filter_60/Question_list}
+
+
+# ============================================================
+# sampling/filtering
+# ============================================================
+
+sampling:
+  use_sample_list: true
+  sample_list_json: ./config/test/sampled_cases_100_by_category.json
+  # ./config/test/sampled_cases_100_bagel.json
+  # ./config/test/remaining_cases_structured_CUT_IMG=14_CUT_TXT=16.json
+  target_sample_idx: 0 #null
+  max_eval_images: null
+  selected_categories: null
+
+
+runtime:
+  num_workers: 8
+  resume: true
+  max_retries: 8
+  base_sleep_sec: 5.0
+  max_sleep_sec: 60.0
+
+
+paths:
+  result_dir: result
+  debug_dir: debug
+
+  latency_detail_json: latency_details_eval.json
+  latency_summary_json: latency_summary_eval.json
+
+  all_sample_scores_json: all_sample_scores.json
+  all_sample_scores_csv: all_sample_scores.csv
+
+  failure_log_jsonl: failed_eval_cases.jsonl
+  failure_summary_json: failure_summary.json
+
+
+debug:
+  enabled: false
+
+
+analysis:
+  failure_summary: true
+  benchmark_stats: true
+  folder_stats: true
+
+  benchmark_stats_json: benchmark_stats_eval.json
+  question_folder_stats_json: folder_stats_question.json
+  result_folder_stats_json: folder_stats_eval_result.json
+
+
+vlm:
+  provider: gpt
+
+
+face_similarity:
+  enabled: true
+
+  arcface_root: ${UFO_ARCFACE_ROOT:-./Evaluation/arcface-pytorch}
+
+  model_path: ${UFO_ARCFACE_MODEL_PATH:-./Evaluation/arcface-pytorch/model_data/arcface_mobilefacenet.pth}
+
+  backbone: ${UFO_ARCFACE_BACKBONE:-mobilefacenet}
+
+  use_cuda: ${UFO_ARCFACE_USE_CUDA:-false}

@@ -6,7 +6,7 @@ CORRECT RESULT of applying the REFERENCE TEXT
 to the REFERENCE IMAGE,
 with respect to the SPECIFIC ATTRIBUTE mentioned in the QUESTION.
 
-This task evaluates EDIT CORRECTNESS ¡ª NOT similarity.
+This task evaluates EDIT CORRECTNESS â€” NOT similarity.
 
 ==================================================
 CORE INTERPRETATION RULE (CRITICAL)
@@ -27,7 +27,7 @@ MANDATORY REASONING PROCEDURE (ORDERED)
 You MUST follow these steps EXACTLY in order.
 
 --------------------------------------------------
-Step 1 ¡ª Original State Identification
+Step 1 â€” Original State Identification
 --------------------------------------------------
 Use the REFERENCE IMAGE ONLY to identify
 the ORIGINAL STATE of the specified attribute.
@@ -35,7 +35,7 @@ the ORIGINAL STATE of the specified attribute.
 Do NOT evaluate correctness at this step.
 
 --------------------------------------------------
-Step 2 ¡ª Edit Intent Determination
+Step 2 â€” Edit Intent Determination
 --------------------------------------------------
 Use the REFERENCE TEXT ONLY to determine
 what should happen to that attribute.
@@ -54,7 +54,7 @@ If the attribute is NOT mentioned in the reference text,
 the required operation is PRESERVE.
 
 --------------------------------------------------
-Step 3 ¡ª Edit Result Verification
+Step 3 â€” Edit Result Verification
 --------------------------------------------------
 Evaluate whether the GENERATED IMAGE correctly reflects
 the expected result AFTER applying that operation
@@ -90,7 +90,9 @@ NON-NEGOTIABLE CONSTRAINTS
 ANSWER FORMAT
 ==================================================
 
-Answer strictly with:
-Yes
+Output exactly one lowercase word:
+yes
 or
-No
+no
+
+Do not output anything else.

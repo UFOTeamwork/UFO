@@ -8,7 +8,7 @@ from src.vlm_tools.factory import build_vlm
 class VLMMatcher:
     def __init__(self, cfg: Dict[str, Any]):
         vlm_cfg = cfg['vlm']
-        self.vlm = build_vlm(vlm_cfg['provider'])
+        self.vlm = build_vlm(vlm_cfg['provider'], model=vlm_cfg.get('model'))
 
     def prepare_images(self, *images):
         prepared = self.vlm.prepare_images(list(images))

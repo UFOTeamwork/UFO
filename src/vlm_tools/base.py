@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import mimetypes
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from io import BytesIO
@@ -11,12 +12,112 @@ from PIL import Image
 
 
 def parse_yes_no(text: str) -> tuple[str, int]:
-    norm = text.strip().lower()
-    if norm.startswith("yes"):
+    """
+    Parse the FINAL yes/no judgment from a VLM response.
+
+    Supported examples:
+        yes
+        no
+        YES
+        **yes**
+        `no`
+        Answer: yes
+        Final answer: no
+        ### answer
+        yes
+        ### decision
+        **no**
+
+    Reasoning text is allowed, but only an explicit final answer is used.
+    Arbitrary occurrences of "yes" / "no" inside the reasoning body are
+    intentionally ignored to avoid false parsing.
+    """
+    if not isinstance(text, str):
+        raise ValueError(
+            "Cannot parse yes/no from non-string value: "
+            f"{type(text).__name__}"
+        )
+
+    raw = text.strip()
+    if not raw:
+        raise ValueError("Cannot parse yes/no from empty response.")
+
+    # 1) Exact answer, optionally wrapped in common Markdown punctuation.
+    cleaned = re.sub(
+        r"^[\s#*_`>\-:]+|[\s#*_`>.,;:\-!]+$",
+        "",
+        raw,
+    ).strip().lower()
+
+    if cleaned == "yes":
         return "yes", 1
-    if norm.startswith("no"):
+    if cleaned == "no":
         return "no", 0
-    raise ValueError(f"Cannot parse yes/no from: {text[:200]}")
+
+    # 2) Explicit answer/decision marker.
+    #    If several markers exist, the last one is treated as final.
+    marker_pattern = re.compile(
+        r"(?:^|\n)"
+        r"\s*"
+        r"(?:#{1,6}\s*)?"
+        r"(?:\*\*)?"
+        r"(?:final\s+)?"
+        r"(?:answer|decision)"
+        r"(?:\*\*)?"
+        r"\s*"
+        r"[:\-]?"
+        r"\s*"
+        r"(?:\n\s*)?"
+        r"[*_`]*"
+        r"\b(yes|no)\b"
+        r"[*_`]*",
+        re.IGNORECASE,
+    )
+
+    marker_matches = list(marker_pattern.finditer(raw))
+    if marker_matches:
+        answer = marker_matches[-1].group(1).lower()
+        return answer, 1 if answer == "yes" else 0
+
+    # 3) Last non-empty line is exactly yes/no after light Markdown cleanup.
+    lines = [line.strip() for line in raw.splitlines() if line.strip()]
+    if lines:
+        last_clean = re.sub(
+            r"^[\s#*_`>\-:]+|[\s#*_`>.,;:\-!]+$",
+            "",
+            lines[-1],
+        ).strip().lower()
+
+        if last_clean == "yes":
+            return "yes", 1
+        if last_clean == "no":
+            return "no", 0
+
+    # 4) Explicit final sentence at the end of the response.
+    sentence_pattern = re.compile(
+        r"(?:"
+        r"(?:the\s+)?(?:final\s+)?answer\s*(?:is|:)"
+        r"|"
+        r"(?:the\s+)?(?:final\s+)?decision\s*(?:is|:)"
+        r")"
+        r"\s*"
+        r"[*_`]*"
+        r"\b(yes|no)\b"
+        r"[*_`]*"
+        r"[.!]?"
+        r"\s*$",
+        re.IGNORECASE,
+    )
+
+    sentence_match = sentence_pattern.search(raw)
+    if sentence_match:
+        answer = sentence_match.group(1).lower()
+        return answer, 1 if answer == "yes" else 0
+
+    raise ValueError(
+        "Cannot reliably parse final yes/no answer from VLM response: "
+        f"{raw[:500]}"
+    )
 
 
 @dataclass(frozen=True)
@@ -87,19 +188,16 @@ class BaseVLM(ABC):
         return base64.b64encode(buf.getvalue()).decode("utf-8"), mime_type
 
     def _normalize_yes_no_text(self, text: str) -> str:
-        normalized = text.strip().lower()
-        for ch in (".", "!", ",", ";", ":"):
-            normalized = normalized.replace(ch, "")
-        normalized = normalized.strip()
-        if normalized == "yes":
-            return "yes"
-        if normalized == "no":
-            return "no"
-        if "yes" in normalized and "no" not in normalized:
-            return "yes"
-        if "no" in normalized and "yes" not in normalized:
-            return "no"
-        return normalized
+        """
+        Normalize a VLM response to exactly "yes" or "no".
+
+        All yes/no parsing is delegated to parse_yes_no() so the project has
+        a single parsing policy. A parsing failure is intentionally propagated
+        instead of being silently converted into a valid "no" judgment.
+        """
+        answer, _ = parse_yes_no(text)
+        return answer
+
 
     @abstractmethod
     def ask_vlm(self, prompt: str, images=None, image_roles=None, system_prompt=None, debug: bool = True):

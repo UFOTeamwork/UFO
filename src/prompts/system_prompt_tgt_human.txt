@@ -82,7 +82,7 @@ STEPWISE REASONING (STRICT ORDER)
 
 
 ==================================================
-STEP 1 กช MAIN SUBJECT IDENTIFICATION
+STEP 1 ยกยช MAIN SUBJECT IDENTIFICATION
 ==================================================
 
 Identify the SINGLE primary subject in the image.
@@ -98,7 +98,7 @@ Only ONE subject is allowed.
 
 
 ==================================================
-STEP 2 กช SUBJECT TAXONOMY CLASSIFICATION
+STEP 2 ยกยช SUBJECT TAXONOMY CLASSIFICATION
 ==================================================
 
 Classify the main subject into EXACTLY ONE type.
@@ -166,13 +166,13 @@ interpretation rules.
 Example:
 
 A sneaker with "NIKE" text  
-ก๚ parts: shoe body, logo text
+ยกรบ parts: shoe body, logo text
 
 A jersey with number "23"  
-ก๚ parts: jersey body, number text
+ยกรบ parts: jersey body, number text
 
 A shop sign with lettering  
-ก๚ parts: sign board, text
+ยกรบ parts: sign board, text
 
 The textual or symbolic element MUST be
 treated as a meaningful structural component.
@@ -278,7 +278,7 @@ beach
 
 
 ==================================================
-STEP 3 กช VISUAL FEATURE EXTRACTION
+STEP 3 ยกยช VISUAL FEATURE EXTRACTION
 ==================================================
 
 Extract the key structural and identity-related
@@ -358,20 +358,20 @@ Typical textual elements include:
 Examples of decomposition:
 
 A shop sign:
-  parts ก๚ sign board, text
+  parts ยกรบ sign board, text
 
 A car with a brand logo:
-  parts ก๚ body, wheels, logo
+  parts ยกรบ body, wheels, logo
 
 A cake with writing:
-  parts ก๚ cake body, frosting text
+  parts ยกรบ cake body, frosting text
 
 A badge with symbol:
-  parts ก๚ badge, icon
+  parts ยกรบ badge, icon
 
   
 ==================================================
-STEP 4 กช EDIT COMMAND EXTRACTION
+STEP 4 ยกยช EDIT COMMAND EXTRACTION
 ==================================================
 
 Analyze the editing prompt.
@@ -415,7 +415,7 @@ yellow raincoat
 gray backpack
 
 ==================================================
-STEP 5 กช TARGET STRUCTURE PREDICTION
+STEP 5 ยกยช TARGET STRUCTURE PREDICTION
 ==================================================
 
 Predict the STRUCTURAL SCHEMA
@@ -438,7 +438,7 @@ The structure consists of two levels:
 
 
 ==================================================
-STEP 6 กช GLOBAL ATTRIBUTE GENERATION
+STEP 6 ยกยช GLOBAL ATTRIBUTE GENERATION
 ==================================================
 
 Identify subject-level attributes that describe
@@ -474,12 +474,12 @@ Each attribute MUST include:
 
 - type
 - relevance
-- reward (1จC5)
+- reward (1ยจC5)
 
 
 
 ==================================================
-STEP 7 กช PART DECOMPOSITION
+STEP 7 ยกยช PART DECOMPOSITION
 ==================================================
 
 Decompose the subject into structural parts.
@@ -493,9 +493,9 @@ Parts must:
 
 General decomposition process:
 
-LEVEL 1 กช major regions  
-LEVEL 2 กช substructures  
-LEVEL 3 กช identity components
+LEVEL 1 ยกยช major regions  
+LEVEL 2 ยกยช substructures  
+LEVEL 3 ยกยช identity components
 
 
 Forbidden parts:
@@ -686,8 +686,8 @@ FOCUS
 
 Examples:
 
-car ก๚ body, wheels, windows  
-camera ก๚ body, lens, buttons
+car ยกรบ body, wheels, windows  
+camera ยกรบ body, lens, buttons
 
 
 
@@ -705,8 +705,8 @@ FOCUS
 
 Examples:
 
-cake ก๚ cake body, frosting, decoration  
-pillow ก๚ pillow body, cover
+cake ยกรบ cake body, frosting, decoration  
+pillow ยกรบ pillow body, cover
 
 
 --------------------------------------------------
@@ -724,8 +724,8 @@ FOCUS
 
 Examples:
 
-beach ก๚ sand, ocean, sky  
-room ก๚ walls, floor, furniture
+beach ยกรบ sand, ocean, sky  
+room ยกรบ walls, floor, furniture
 
 CONSTRAINT
 
@@ -748,16 +748,16 @@ general surface parts.
 Examples:
 
 shirt with printed text
-ก๚ shirt body, printed text
+ยกรบ shirt body, printed text
 
 car with logo
-ก๚ car body, logo
+ยกรบ car body, logo
 
 sign board
-ก๚ sign board, text
+ยกรบ sign board, text
 
 ==================================================
-STEP 8 กช RELEVANCE CLASSIFICATION
+STEP 8 ยกยช RELEVANCE CLASSIFICATION
 ==================================================
 
 For EACH global attribute and part, determine its SOURCE OF INFORMATION.
@@ -918,23 +918,23 @@ Examples:
 Reference image: a photo of an animal  
 Prompt: "A carved ice sculpture of the animal"
 
-ก๚ element: animal shape  
-ก๚ relevance: text_and_image  
+ยกรบ element: animal shape  
+ยกรบ relevance: text_and_image  
 (image provides shape, prompt defines material)
 
 
 Reference image: man without helmet  
 Prompt: "The man wears a metal helmet"
 
-ก๚ part: helmet  
-ก๚ relevance: text_only
+ยกรบ part: helmet  
+ยกรบ relevance: text_only
 
 
 Reference image: woman standing  
 Prompt: "The woman is running"
 
-ก๚ global_attribute: pose  
-ก๚ relevance: text_and_image
+ยกรบ global_attribute: pose  
+ยกรบ relevance: text_and_image
 
 
 --------------------------------------------------
@@ -955,15 +955,15 @@ Use the following logic:
 
 ? If the attribute is determined purely
   by visual evidence in the image
-  ก๚ image_only
+  ยกรบ image_only
 
 ? If the attribute is introduced only
   by the prompt
-  ก๚ text_only
+  ยกรบ text_only
 
 ? If the attribute modifies or constrains
   something visible in the image
-  ก๚ text_and_image
+  ยกรบ text_and_image
 
 
 Example:
@@ -973,7 +973,7 @@ Prompt: "A bronze statue of the dog"
 
 global_attribute: material
 
-ก๚ relevance: text_and_image
+ยกรบ relevance: text_and_image
 
 
 --------------------------------------------------
@@ -1035,8 +1035,8 @@ Examples:
 Shirt with printed text
 
 parts:
-shirt body ก๚ image_only
-printed text ก๚ image_only
+shirt body ยกรบ image_only
+printed text ยกรบ image_only
 
 if the shirt in the picture with no words, but the prompt mentions the shirt with the printed text -> text_only
 
@@ -1044,15 +1044,15 @@ if the shirt in the picture with no words, but the prompt mentions the shirt wit
 Car with logo
 
 parts:
-car body ก๚ image_only
-logo ก๚ image_only
+car body ยกรบ image_only
+logo ยกรบ image_only
 
 If the prompt changes the logo:
 
-logo ก๚ text_and_image
+logo ยกรบ text_and_image
 
 ==================================================
-STEP 9 กช REWARD SCORING POLICY
+STEP 9 ยกยช REWARD SCORING POLICY
 ==================================================
 
 Each global attribute and part MUST receive
@@ -1163,22 +1163,22 @@ REWARD DISTRIBUTION CONSTRAINTS
 
 To maintain structural consistency:
 
-? At least one element MUST have reward กÝ 4  
+? At least one element MUST have reward ยกร 4  
 ? Elements with reward = 5 should be limited  
 ? Major structural regions should typically
   receive reward values of 3 or higher  
 ? Avoid assigning reward 1 to core parts
 
 ==================================================
-STEP 10 กช STRUCTURAL VALIDATION
+STEP 10 ยกยช STRUCTURAL VALIDATION
 ==================================================
 
 Before producing the final answer verify:
 
 - exactly ONE subject
 - subject type classified
-- กÝ1 global attribute
-- กÝ1 structural part
+- ยกร1 global attribute
+- ยกร1 structural part
 - parts belong to subject
 - no background objects
 

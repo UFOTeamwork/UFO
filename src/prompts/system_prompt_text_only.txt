@@ -37,7 +37,9 @@ IMPORTANT CLARIFICATIONS
 ANSWER FORMAT
 ==================================================
 
-Answer strictly with:
-Yes
+Output exactly one lowercase word:
+yes
 or
-No
+no
+
+Do not output anything else.
