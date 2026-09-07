@@ -96,3 +96,4 @@ tmp/
 
 # Temporary / intermediate scripts
 scripts/test/
+src/vlm_tools/huichan_key.txt
