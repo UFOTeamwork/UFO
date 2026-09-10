@@ -289,44 +289,6 @@ This is useful when the default provider model has been deprecated or when a spe
 
 ---
 
-### 6. Evaluate Multiple Models
-
-UFO provides `run_all_models_eval.sh` for batch evaluation.
-
-First make the script executable:
-
-```bash
-chmod +x run_all_models_eval.sh
-```
-
-Then run:
-
-```bash
-export UFO_VLM_API_KEY="your-api-key"
-
-./run_all_models_eval.sh
-```
-
-To explicitly specify the VLM, benchmark configuration, and model list:
-
-```bash
-VLM=gpt \
-CONFIG=config/eval_config_660.yaml \
-MODELS="bagel uno omnigen2" \
-./run_all_models_eval.sh
-```
-
-For long-running evaluations:
-
-```bash
-nohup ./run_all_models_eval.sh > run_all_models.log 2>&1 &
-```
-
-Monitor the log with:
-
-```bash
-tail -f run_all_models.log
-```
 
 The evaluation produces fine-grained evaluation results for each model and aggregates them into the final UFO score.
 
