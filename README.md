@@ -28,8 +28,9 @@ UFO provides a fine-grained evaluation framework for text-and-reference-image co
 ------
 
 ## 📦 Dataset
-
-![bench_00](./img/bench_00-1788975832145-2.png)
+<p align="center">
+  <img src="assets/bench.png" width="95%">
+</p>
 
 **UFO-Bench** is designed for evaluating subject-driven, personalized, and reference-image-conditioned image generation under complex visual and textual conditions.
 
@@ -107,7 +108,6 @@ UFO-Bench/
 Each entry in `metadata*.jsonl` provides the textual prompt used as the generation or editing condition for the corresponding benchmark case.
 
 ------
-
 ## 🚀 Quick Start
 
 ### 1. Installation
@@ -118,23 +118,38 @@ cd UFO
 
 conda create -n ufo python=3.10
 conda activate ufo
+
 pip install -r requirements.txt
 ```
 
-Configure the VLM API key if required:
+For remote VLM backends, configure the API key before running UFO:
 
 ```bash
 export UFO_VLM_API_KEY="your-api-key"
 ```
 
-------
+Alternatively, provider-specific environment variables can be used. For example:
+
+```bash
+export OPENAI_API_KEY="your-openai-key"
+```
+
+> `qwen` runs locally and does not require an API key.
+
+---
 
 ### 2. Generate AEUs for New Cases
 
-For new text-reference-image cases, first create a split configuration:
+Create a runtime split configuration from the provided template:
 
 ```bash
-cp config/split_config_example.yaml config/split_config.yaml
+cp config/split_config.example.yaml config/split_config.yaml
+```
+
+Modify the dataset paths, output paths, and VLM settings in:
+
+```text
+config/split_config.yaml
 ```
 
 Then run the split pipeline:
@@ -145,37 +160,34 @@ python scripts/run_split_generate.py \
     --vlm gpt
 ```
 
-The pipeline generates:
+The split pipeline generates the structured annotations and fine-grained evaluation questions required by UFO.
+
+Typical outputs include:
 
 ```text
 T_gt/
 Question_list/
 ```
 
-which are used by the downstream UFO evaluator.
+> The released UFO-Bench already provides `T_gt/` and `Question_list/`. Therefore, this step is not required when reproducing the official UFO-Bench evaluation.
 
-> The released UFO-Bench already provides `T_gt/` and `Question_list/`, so this step is not required when reproducing the official benchmark.
+---
 
-------
+### 3. Evaluate Your Own Cases
 
-### 3. Evaluate Your Model
-
-For a customized evaluation, first create a local evaluation configuration:
+Create a runtime evaluation configuration:
 
 ```bash
-cp config/eval_config_example.yaml config/eval_config.yaml
+cp config/eval_config.example.yaml config/eval_config.yaml
 ```
 
-Modify the required paths in `config/eval_config.yaml`, including:
+Modify the required paths and evaluation settings in:
 
-- metadata / prompts,
-- reference images,
-- `T_gt`,
-- `Question_list`,
-- generated-image root,
-- evaluation output directory.
+```text
+config/eval_config.yaml
+```
 
-Then run:
+Then evaluate a generated-image model:
 
 ```bash
 python scripts/run_eval_score.py \
@@ -186,25 +198,50 @@ python scripts/run_eval_score.py \
 
 where:
 
-- `--config` specifies the evaluation configuration;
-- `--vlm` specifies the VLM evaluator;
-- `--model_name` specifies the generation model to evaluate.
+* `--config` specifies the evaluation configuration;
+* `--vlm` selects the VLM judge;
+* `--model_name` specifies the generated-image model to evaluate.
 
-The value of `--model_name` should correspond to the generated-image directory configured under the generated-image root.
+The value of `--model_name` must match the corresponding directory under the configured generated-image root.
 
-------
+For example:
 
-### 4. Evaluate the Official UFO-Bench (660 Cases)
+```text
+<generated_root>/
+└── your_model/
+    └── ...
+```
 
-The released UFO-Bench contains **660 official evaluation cases** with prepared `T_gt/` and `Question_list/` annotations.
+The `--vlm` argument is optional. If omitted:
 
-Use the provided standard configuration:
+```bash
+python scripts/run_eval_score.py \
+    --config config/eval_config.yaml \
+    --model_name your_model
+```
+
+UFO uses the VLM provider configured in:
+
+```yaml
+vlm:
+  provider: ...
+```
+
+For consistency, we recommend using the same VLM provider for the split and evaluation stages.
+
+---
+
+### 4. Evaluate UFO-Bench (660 Cases)
+
+The official UFO-Bench contains **660 evaluation cases** with released structured annotations and evaluation questions.
+
+Use the provided benchmark configuration:
 
 ```text
 config/eval_config_660.yaml
 ```
 
-Update the generated-image root and output path in the configuration if necessary.
+Update the dataset paths, generated-image root, and output path if necessary.
 
 Then evaluate a model:
 
@@ -215,7 +252,7 @@ python scripts/run_eval_score.py \
     --model_name bagel
 ```
 
-To evaluate your own model:
+To evaluate your own generated results:
 
 ```bash
 python scripts/run_eval_score.py \
@@ -224,7 +261,53 @@ python scripts/run_eval_score.py \
     --model_name your_model
 ```
 
-To evaluate multiple models:
+If the VLM provider is already configured in `eval_config_660.yaml`, `--vlm` can be omitted:
+
+```bash
+python scripts/run_eval_score.py \
+    --config config/eval_config_660.yaml \
+    --model_name your_model
+```
+
+---
+
+### 5. Override the VLM Judge Model
+
+You can override the default judge model using `--vlm_model`.
+
+For example:
+
+```bash
+python scripts/run_eval_score.py \
+    --config config/eval_config_660.yaml \
+    --vlm gemini \
+    --vlm_model gemini-2.5-pro \
+    --model_name bagel
+```
+
+This is useful when the default provider model has been deprecated or when a specific judge model is required.
+
+---
+
+### 6. Evaluate Multiple Models
+
+UFO provides `run_all_models_eval.sh` for batch evaluation.
+
+First make the script executable:
+
+```bash
+chmod +x run_all_models_eval.sh
+```
+
+Then run:
+
+```bash
+export UFO_VLM_API_KEY="your-api-key"
+
+./run_all_models_eval.sh
+```
+
+To explicitly specify the VLM, benchmark configuration, and model list:
 
 ```bash
 VLM=gpt \
@@ -233,12 +316,20 @@ MODELS="bagel uno omnigen2" \
 ./run_all_models_eval.sh
 ```
 
-The evaluation produces:
+For long-running evaluations:
 
-- **AEU-level alignment scores**, and
-- an aggregated **UFO Score**.
+```bash
+nohup ./run_all_models_eval.sh > run_all_models.log 2>&1 &
+```
 
-------
+Monitor the log with:
+
+```bash
+tail -f run_all_models.log
+```
+
+The evaluation produces fine-grained evaluation results for each model and aggregates them into the final UFO score.
+
 
 ## 🤖 Supported VLM
 
