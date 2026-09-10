@@ -29,7 +29,7 @@ UFO provides a fine-grained evaluation framework for text-and-reference-image co
 
 ## 📦 Dataset
 <p align="center">
-  <img src="asset/bench.png" width="95%">
+  <img src="assets/bench.png" width="95%">
 </p>
 
 **UFO-Bench** is designed for evaluating subject-driven, personalized, and reference-image-conditioned image generation under complex visual and textual conditions.
