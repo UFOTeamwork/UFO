@@ -1,6 +1,6 @@
 # UFO: Chain-of-Evaluation for Omni-Condition Alignment in Multi-Modal Image Generation (ICML 2026)
 
-> Danning Zhang, Yijing Lin, Shuhan Zhuang, Mengqi Huang, Shaojin Wu, Shancheng Fang, Zhendong Mao
+> Danning Zhang, Yijing Lin,  Zhuang, Mengqi Huang, Shaojin Wu, Shancheng Fang, Zhendong Mao
 
 💻 [GitHub](https://github.com/UFOTeamwork/UFO) | 🤗 [Hugging Face](https://huggingface.co/datasets/UFOTeamwork/UFO-Bench) | 📰 [Paper]()
 
