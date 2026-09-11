@@ -371,11 +371,10 @@ UFO/
 If you use **UFO** or **UFO-Bench** in your research, please cite our paper:
 
 ```bibtex
-@inproceedings{ufo2026,
+@inproceedings{zhangufo,
   title={UFO: Chain-of-Evaluation for Omni-Condition Alignment in Multi-Modal Image Generation},
   author={Zhang, Danning and Lin, Yijing and Zhuang, Shuhan and Huang, Mengqi and Wu, Shaojin and Fang, Shancheng and Mao, Zhendong},
-  booktitle={Proceedings of the Forty-Third International Conference on Machine Learning},
-  year={2026}
+  booktitle={Forty-third International Conference on Machine Learning}
 }
 ```
 
